@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-report',
@@ -52,12 +52,134 @@ export class ReportComponent implements OnInit {
   public lineChartLegend:boolean = true;
   public lineChartType:string = 'line';
 
+  public lineChartColors:Array<any> = [
+    { // 1
+      backgroundColor: 'rgba(148,159,177,0.2)',
+      borderColor: 'red',
+      pointBackgroundColor: 'red',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+    },
+    { // 2
+      backgroundColor: 'rgba(77,83,96,0.2)',
+      borderColor: 'blue',
+      pointBackgroundColor: 'blue',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: 'rgba(77,83,96,1)'
+    },
+    { // 3
+      backgroundColor: 'rgba(148,159,177,0.2)',
+      borderColor: 'pink',
+      pointBackgroundColor: 'pink',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+    },
+    { // 4
+      backgroundColor: 'rgba(148,159,177,0.2)',
+      borderColor: 'orange',
+      pointBackgroundColor: 'orange',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+    },
+    { // 5
+      backgroundColor: 'rgba(148,159,177,0.2)',
+      borderColor: 'yellow',
+      pointBackgroundColor: 'yellow',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+    },
+    { // 6
+      backgroundColor: 'rgba(148,159,177,0.2)',
+      borderColor: 'green',
+      pointBackgroundColor: 'green',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+    },
+    { // 7
+      backgroundColor: 'rgba(148,159,177,0.2)',
+      borderColor: 'grey',
+      pointBackgroundColor: 'grey',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+    },
+    { // 8
+      backgroundColor: 'rgba(148,159,177,0.2)',
+      borderColor: 'purple',
+      pointBackgroundColor: 'purple',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+    },
+    { // 9
+      backgroundColor: 'rgba(148,159,177,0.2)',
+      borderColor: 'black',
+      pointBackgroundColor: 'black',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+    },
+    { // 10
+      backgroundColor: 'rgba(148,159,177,0.2)',
+      borderColor: 'orangered',
+      pointBackgroundColor: 'orangered',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+    },
+    { // 11
+      backgroundColor: 'rgba(148,159,177,0.2)',
+      borderColor: 'brown',
+      pointBackgroundColor: 'brown',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+    },
+    { // 12
+      backgroundColor: 'rgba(148,159,177,0.2)',
+      borderColor: 'gold',
+      pointBackgroundColor: 'gold',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+    },
+    { // 13
+      backgroundColor: 'rgba(148,159,177,0.2)',
+      borderColor: 'red',
+      pointBackgroundColor: 'red',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+    },
+    { // 14
+      backgroundColor: 'rgba(148,159,177,0.2)',
+      borderColor: 'green',
+      pointBackgroundColor: 'green',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+    },
+    { // 15
+      backgroundColor: 'rgba(148,159,177,0.2)',
+      borderColor: 'skyblue',
+      pointBackgroundColor: 'skyblue',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+    }
+  ];
 
   constructor(private http: HttpClient, private router:Router) { }
 
 
   ngOnInit() {
-    this.http.get("http://localhost:4741/reports").subscribe((res:any)=>{
+    this.http.get(environment.reportsUrl).subscribe((res:any)=>{
       for(let i=0; i<res.length; i++){
         this.visits[i] = res[i].total_visits;
         this.revenues[i] = res[i].revenue;

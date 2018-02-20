@@ -9,9 +9,9 @@
     "experimentalDecorators": true,
     "target": "es5",
     "typeRoots": [
-      "node_modules/@types"
+      "node_modules/@types",
     ],
-    "types": ["gapi"],
+    "types": ["gapi", "gapi.auth2", "gapi.auth"],
     "lib": [
       "es2017",
       "dom"

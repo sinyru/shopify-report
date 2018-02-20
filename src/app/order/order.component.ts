@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
 import { environment } from '../../environments/environment';
 
+
+
 @Component({
   selector: 'app-order',
   templateUrl: './order.component.html',
@@ -16,8 +18,6 @@ export class OrderComponent implements OnInit {
   constructor(private http: HttpClient, private router:Router, private spinnerService: Ng4LoadingSpinnerService) { }
 
   ngOnInit() {
-    let ga:gapi;
-    console.log(ga);
   }
 
   public getNps() {
@@ -65,6 +65,7 @@ export class OrderComponent implements OnInit {
       let sevenDaysAgo = nwDate.toISOString().split("T")[0];
 
       gapi.auth.authorize(authData, (res:any)=>{
+
           gapi.client.load('analytics', 'v3').then(function() {
           gapi.client.analytics.management.accounts.list().then( (accountResponse:any) =>{
             let accountId = accountResponse.result.items[4].id;
@@ -92,7 +93,7 @@ export class OrderComponent implements OnInit {
             });
           });
         });
-    });
+      });
 
     this.http.get(environment.ordersOneUrl)
     .subscribe((pageOneRes:any)=>{
@@ -156,7 +157,7 @@ export class OrderComponent implements OnInit {
                 this.http.get(environment.reportsUrl)
                 .subscribe((reportRes:any)=>{
                   if (reportRes.find((report)=> report['dates'] == dateRes[dateRes.length-1].start_date) === undefined) {
-                    this.http.post("http://localhost:4741/reports", {report: report})
+                    this.http.post(environment.reportsUrl, {report: report})
                     .subscribe(()=>{
                         let databaseDate = dateRes[dateRes.length-1].start_date;
                         let nwDate =  new Date(databaseDate);
