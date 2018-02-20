@@ -1,0 +1,16 @@
+.report-data {
+  float: left;
+
+}
+
+td, th {
+  border: 1px solid black;
+}
+
+.report-database {
+  width: 50em;
+  overflow-x: auto;
+  white-space: nowrap;
+  position: fixed;
+  margin-left: 10em;
+}
