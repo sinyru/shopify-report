@@ -64,20 +64,20 @@ export class OrderComponent implements OnInit {
       nwDate.setDate(nwDate.getDate()-7);
       let sevenDaysAgo = nwDate.toISOString().split("T")[0];
 
-      gapi.auth.authorize(authData, (res:any)=>{
+      window['gapi'].auth.authorize(authData, (res:any)=>{
 
-          gapi.client.load('analytics', 'v3').then(function() {
-          gapi.client.analytics.management.accounts.list().then( (accountResponse:any) =>{
+          window['gapi'].client.load('analytics', 'v3').then(function() {
+          window['gapi'].client.analytics.management.accounts.list().then( (accountResponse:any) =>{
             let accountId = accountResponse.result.items[4].id;
-            gapi.client.analytics.management.webproperties.list({'accountId': accountId})
+            window['gapi'].client.analytics.management.webproperties.list({'accountId': accountId})
             .then((accountPropertiesResponse:any) => {
-              gapi.client.analytics.management.profiles.list({
+              window['gapi'].client.analytics.management.profiles.list({
                   'accountId': accountPropertiesResponse.result.items[0].accountId,
                   'webPropertyId': accountPropertiesResponse.result.items[0].id,
               })
               .then((profileIdResponse:any)=>{
 
-                gapi.client.analytics.data.ga.get({
+                window['gapi'].client.analytics.data.ga.get({
                   'ids': 'ga:' + profileIdResponse.result.items[0].id,
                   'start-date': sevenDaysAgo,
                   'end-date': databaseDate,
