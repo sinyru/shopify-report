@@ -5,12 +5,16 @@ import { ChartsModule } from 'ng2-charts';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Ng4LoadingSpinnerModule } from 'ng4-loading-spinner';
 
+
 import { AppComponent } from './app.component';
 import { routing } from './app.routing';
 import { OrderComponent } from './order/order.component';
 
 import { UpdateOrdersService } from './services/update-orders.service';
 import { ReportComponent } from './report/report.component';
+import { environment } from '../environments/environment';
+
+
 
 
 @NgModule({

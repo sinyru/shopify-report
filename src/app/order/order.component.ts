@@ -12,18 +12,19 @@ import { environment } from '../../environments/environment';
 })
 
 export class OrderComponent implements OnInit {
-  npsScore: number;
+  public npsScore: number;
   constructor(private http: HttpClient, private router:Router, private spinnerService: Ng4LoadingSpinnerService) { }
 
   ngOnInit() {
-    this.http.get(environment.ordersUrl).subscribe(res=>console.log(res));
+    let ga:gapi;
+    console.log(ga);
   }
 
   public getNps() {
     let promoNum = 0;
     let detractNum = 0;
     this.http.get(environment.npsUrl)
-    .subscribe(res=>{
+    .subscribe((res:any)=>{
       for(let i=0; i<res.length;i++){
         if(res[i][1] >= 9){
           promoNum++;
@@ -57,7 +58,7 @@ export class OrderComponent implements OnInit {
     };
 
     this.http.get(environment.dateUrl).toPromise()
-    .then((dateRes)=>{
+    .then((dateRes:any)=>{
       let databaseDate = dateRes[dateRes.length-1].start_date;
       let nwDate =  new Date(databaseDate);
       nwDate.setDate(nwDate.getDate()-7);
@@ -73,7 +74,6 @@ export class OrderComponent implements OnInit {
                   'accountId': accountPropertiesResponse.result.items[0].accountId,
                   'webPropertyId': accountPropertiesResponse.result.items[0].id,
               })
-
               .then((profileIdResponse:any)=>{
 
                 gapi.client.analytics.data.ga.get({
@@ -92,19 +92,18 @@ export class OrderComponent implements OnInit {
             });
           });
         });
-      }
     });
 
     this.http.get(environment.ordersOneUrl)
-    .subscribe((pageOneRes)=>{
+    .subscribe((pageOneRes:any)=>{
       this.http.get(environment.ordersTwoUrl)
-      .subscribe((pageTwoRes)=>{
+      .subscribe((pageTwoRes:any)=>{
         this.http.get(environment.ordersThreeUrl)
-        .subscribe((pageThreeRes)=>{
+        .subscribe((pageThreeRes:any)=>{
           this.http.get(environment.ordersFourUrl)
-          .subscribe((pageFourRes)=>{
+          .subscribe((pageFourRes:any)=>{
             this.http.get(environment.ordersFiveUrl)
-            .subscribe((pageFiveRes)=>{
+            .subscribe((pageFiveRes:any)=>{
               let fullResponse = pageOneRes.orders.concat(pageTwoRes.orders).concat(pageThreeRes.orders).concat(pageFourRes.orders).concat(pageFiveRes.orders);
               let revenue:number = 0;
               let dateEnd: string = "";
@@ -134,7 +133,7 @@ export class OrderComponent implements OnInit {
               }
 
               this.http.get(environment.dateUrl)
-              .subscribe((dateRes)=>{
+              .subscribe((dateRes:any)=>{
                 let report = {
                   revenue: revenue,
                   dates: dateRes[dateRes.length-1].start_date,
@@ -164,7 +163,8 @@ export class OrderComponent implements OnInit {
                         nwDate.setDate(nwDate.getDate()+7);
                         let updatedDate = nwDate.toISOString().split("T")[0];
                         if (new Date().toISOString().split("T")[0] > updatedDate) {
-                          this.http.post(environment.dateUrl, {'input_date': { 'start_date' : updatedDate}}).toPromise().then(()=> {
+                          this.http.post(environment.dateUrl, {'input_date': { 'start_date' : updatedDate}})
+                          .toPromise().then(()=> {
                             this.goReport();
                             this.spinnerService.hide();
                           });
@@ -173,15 +173,17 @@ export class OrderComponent implements OnInit {
                           this.spinnerService.hide();
                         }
                       });
-                    });
+                  } else {
+                    this.goReport();
+                    this.spinnerService.hide();
                   }
+                    });
+                  });
                 });
               });
-
             });
           });
         });
       });
-    });
-  }
+    }
 }
