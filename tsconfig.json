@@ -11,7 +11,7 @@
     "typeRoots": [
       "node_modules/@types",
     ],
-    "types": ["gapi", "gapi.auth2", "gapi.auth"],
+    "types": ["gapi", "gapi.auth2", "gapi.auth", "gapi.client"],
     "lib": [
       "es2017",
       "dom"

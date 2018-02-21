@@ -4,8 +4,7 @@ import 'rxjs/add/operator/toPromise';
 import { Router } from '@angular/router';
 import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
 import { environment } from '../../environments/environment';
-
-
+declare var gapi : any;
 
 @Component({
   selector: 'app-order',
@@ -15,9 +14,12 @@ import { environment } from '../../environments/environment';
 
 export class OrderComponent implements OnInit {
   public npsScore: number;
-  constructor(private http: HttpClient, private router:Router, private spinnerService: Ng4LoadingSpinnerService) { }
+
+  constructor(private http: HttpClient, private router:Router,
+              private spinnerService: Ng4LoadingSpinnerService) { }
 
   ngOnInit() {
+
   }
 
   public getNps() {
@@ -58,32 +60,35 @@ export class OrderComponent implements OnInit {
     };
 
     this.http.get(environment.dateUrl).toPromise()
-    .then((dateRes:any)=>{
-      let databaseDate = dateRes[dateRes.length-1].start_date;
+    .then((dateRespond:any)=>{
+      let databaseDate = dateRespond[dateRespond.length-1].start_date;
       let nwDate =  new Date(databaseDate);
       nwDate.setDate(nwDate.getDate()-7);
       let sevenDaysAgo = nwDate.toISOString().split("T")[0];
 
-      window['gapi'].auth.authorize(authData, (res:any)=>{
 
-          window['gapi'].client.load('analytics', 'v3').then(function() {
-          window['gapi'].client.analytics.management.accounts.list().then( (accountResponse:any) =>{
+      gapi.auth.authorize(authData, ()=>{
+
+          gapi.client.load('analytics', 'v3').then(()=> {
+          gapi.client.analytics.management.accounts.list().then( (accountResponse:any) =>{
             let accountId = accountResponse.result.items[4].id;
-            window['gapi'].client.analytics.management.webproperties.list({'accountId': accountId})
+            console.log("account id is ",accountId);
+            gapi.client.analytics.management.webproperties.list({'accountId': accountId})
             .then((accountPropertiesResponse:any) => {
-              window['gapi'].client.analytics.management.profiles.list({
+              console.log("account properties is ",accountPropertiesResponse);
+              gapi.client.analytics.management.profiles.list({
                   'accountId': accountPropertiesResponse.result.items[0].accountId,
                   'webPropertyId': accountPropertiesResponse.result.items[0].id,
-              })
-              .then((profileIdResponse:any)=>{
-
-                window['gapi'].client.analytics.data.ga.get({
+              }).then((profileIdResponse:any)=>{
+                console.log("profile id is ",profileIdResponse.result.items[0].id);
+                gapi.client.analytics.data.ga.get({
                   'ids': 'ga:' + profileIdResponse.result.items[0].id,
                   'start-date': sevenDaysAgo,
                   'end-date': databaseDate,
                   'metrics': 'ga:sessions',
                   'dimensions': 'ga:deviceCategory',
                 }).then((coreReportResponse:any)=>{
+                  console.log("core report is ", coreReportResponse);
                   mobileNum = coreReportResponse.result.rows[1][1];
                   desktopNum = coreReportResponse.result.rows[0][1];
                   tabletNum = coreReportResponse.result.rows[2][1];
@@ -95,6 +100,8 @@ export class OrderComponent implements OnInit {
         });
       });
 
+
+    }).then(()=>{
     this.http.get(environment.ordersOneUrl)
     .subscribe((pageOneRes:any)=>{
       this.http.get(environment.ordersTwoUrl)
