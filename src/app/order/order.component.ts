@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
 import { environment } from '../../environments/environment';
 declare var gapi : any;
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-order',
@@ -16,9 +17,17 @@ export class OrderComponent implements OnInit {
   public npsScore: number;
 
   constructor(private http: HttpClient, private router:Router,
-              private spinnerService: Ng4LoadingSpinnerService) { }
+              private spinnerService: Ng4LoadingSpinnerService,
+              public authService: AuthService) { }
 
   ngOnInit() {
+    if (this.authService.user === false ){
+      this.router.navigate(['']);
+    }
+  }
+
+  logOut() {
+    this.authService.logOut();
   }
 
   public goReport() {
@@ -77,16 +86,16 @@ export class OrderComponent implements OnInit {
       });
 
     }).then(()=>{
-    this.http.get(environment.ordersOneUrl)
-    .subscribe((pageOneRes:any)=>{
-      this.http.get(environment.ordersTwoUrl)
-      .subscribe((pageTwoRes:any)=>{
-        this.http.get(environment.ordersThreeUrl)
-        .subscribe((pageThreeRes:any)=>{
-          this.http.get(environment.ordersFourUrl)
-          .subscribe((pageFourRes:any)=>{
-            this.http.get(environment.ordersFiveUrl)
-            .subscribe((pageFiveRes:any)=>{
+    this.http.get(environment.ordersOneUrl).toPromise()
+    .then((pageOneRes:any)=>{
+      this.http.get(environment.ordersTwoUrl).toPromise()
+      .then((pageTwoRes:any)=>{
+        this.http.get(environment.ordersThreeUrl).toPromise()
+        .then((pageThreeRes:any)=>{
+          this.http.get(environment.ordersFourUrl).toPromise()
+          .then((pageFourRes:any)=>{
+            this.http.get(environment.ordersFiveUrl).toPromise()
+            .then((pageFiveRes:any)=>{
               let fullResponse = pageOneRes.orders.concat(pageTwoRes.orders).concat(pageThreeRes.orders).concat(pageFourRes.orders).concat(pageFiveRes.orders);
               let revenue:number = 0;
               let dateEnd: string = "";

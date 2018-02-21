@@ -9,17 +9,22 @@ import { AppComponent } from './app.component';
 import { routing } from './app.routing';
 import { OrderComponent } from './order/order.component';
 
-import { UpdateOrdersService } from './services/update-orders.service';
 import { ReportComponent } from './report/report.component';
 import { environment } from '../environments/environment';
 
+import { AngularFireModule } from 'angularfire2';
+import { AngularFireDatabaseModule } from 'angularfire2/database';
+import { AngularFireAuthModule } from 'angularfire2/auth';
 
+import { AuthService } from './services/auth.service';
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     OrderComponent,
-    ReportComponent
+    ReportComponent,
+    LoginComponent,
   ],
   imports: [
     BrowserModule,
@@ -27,9 +32,12 @@ import { environment } from '../environments/environment';
     routing,
     ChartsModule,
     FormsModule,
-    Ng4LoadingSpinnerModule.forRoot()
+    Ng4LoadingSpinnerModule.forRoot(),
+    AngularFireModule.initializeApp(environment.firebase, 'angular-auth-firebase'),
+    AngularFireDatabaseModule,
+    AngularFireAuthModule
   ],
-  providers: [UpdateOrdersService],
+  providers: [AuthService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

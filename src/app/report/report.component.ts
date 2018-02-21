@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
+import { AuthService } from '../services/auth.service';
+
 
 @Component({
   selector: 'app-report',
@@ -175,10 +177,13 @@ export class ReportComponent implements OnInit {
     }
   ];
 
-  constructor(private http: HttpClient, private router:Router) { }
+  constructor(private http: HttpClient, private router:Router, public authService: AuthService) { }
 
 
   ngOnInit() {
+    if (this.authService.user === false ){
+      this.router.navigate(['']);
+    }
     this.http.get(environment.reportsUrl).subscribe((res:any)=>{
       for(let i=0; i<res.length; i++){
         this.visits[i] = res[i].total_visits;
@@ -201,6 +206,6 @@ export class ReportComponent implements OnInit {
   }
 
   public goBack() {
-    this.router.navigate(['']);
+    this.router.navigate(['home']);
   }
 }
