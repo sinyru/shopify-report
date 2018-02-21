@@ -19,25 +19,6 @@ export class OrderComponent implements OnInit {
               private spinnerService: Ng4LoadingSpinnerService) { }
 
   ngOnInit() {
-
-  }
-
-  public getNps() {
-    let promoNum = 0;
-    let detractNum = 0;
-    this.http.get(environment.npsUrl)
-    .subscribe((res:any)=>{
-      for(let i=0; i<res.length;i++){
-        if(res[i][1] >= 9){
-          promoNum++;
-        } else if (res[i][1] <= 6) {
-          detractNum++;
-        }
-      }
-      let promoPerc = promoNum/res.length;
-      let detractPerc = detractNum/res.length;
-      this.npsScore = Math.round((promoPerc-detractPerc)*100);
-    });
   }
 
   public goReport() {
@@ -46,7 +27,6 @@ export class OrderComponent implements OnInit {
 
   public updateReport():any {
     this.spinnerService.show();
-    this.getNps();
     let visits: number = 0;
     let mobileNum: number = 0;
     let desktopNum: number = 0;
@@ -72,15 +52,12 @@ export class OrderComponent implements OnInit {
           gapi.client.load('analytics', 'v3').then(()=> {
           gapi.client.analytics.management.accounts.list().then( (accountResponse:any) =>{
             let accountId = accountResponse.result.items[4].id;
-            console.log("account id is ",accountId);
             gapi.client.analytics.management.webproperties.list({'accountId': accountId})
             .then((accountPropertiesResponse:any) => {
-              console.log("account properties is ",accountPropertiesResponse);
               gapi.client.analytics.management.profiles.list({
                   'accountId': accountPropertiesResponse.result.items[0].accountId,
                   'webPropertyId': accountPropertiesResponse.result.items[0].id,
               }).then((profileIdResponse:any)=>{
-                console.log("profile id is ",profileIdResponse.result.items[0].id);
                 gapi.client.analytics.data.ga.get({
                   'ids': 'ga:' + profileIdResponse.result.items[0].id,
                   'start-date': sevenDaysAgo,
@@ -88,7 +65,6 @@ export class OrderComponent implements OnInit {
                   'metrics': 'ga:sessions',
                   'dimensions': 'ga:deviceCategory',
                 }).then((coreReportResponse:any)=>{
-                  console.log("core report is ", coreReportResponse);
                   mobileNum = coreReportResponse.result.rows[1][1];
                   desktopNum = coreReportResponse.result.rows[0][1];
                   tabletNum = coreReportResponse.result.rows[2][1];
@@ -99,7 +75,6 @@ export class OrderComponent implements OnInit {
           });
         });
       });
-
 
     }).then(()=>{
     this.http.get(environment.ordersOneUrl)
@@ -140,13 +115,29 @@ export class OrderComponent implements OnInit {
                 }
               }
 
+              let promoNum = 0;
+              let detractNum = 0;
+              let npsNum;
+              this.http.get(environment.npsUrl)
+              .toPromise().then((res:any)=>{
+                for(let i=0; i<res.length;i++){
+                  if(res[i][1] >= 9){
+                    promoNum++;
+                  } else if (res[i][1] <= 6) {
+                    detractNum++;
+                  }
+                }
+                let promoPerc = promoNum/res.length;
+                let detractPerc = detractNum/res.length;
+                npsNum = Math.round((promoPerc-detractPerc)*100);
+              }).then(()=>{
               this.http.get(environment.dateUrl)
               .subscribe((dateRes:any)=>{
                 let report = {
                   revenue: revenue,
                   dates: dateRes[dateRes.length-1].start_date,
                   repeat_customers: repeatCustomers,
-                  total_visits: visits,
+                  total_visits: Number(visits),
                   total_orders: fullResponse.length,
                   average_order_value: revenue/fullResponse.length,
                   conversion_rate: fullResponse.length/visits,
@@ -155,12 +146,12 @@ export class OrderComponent implements OnInit {
                   six_packs: sixPacks,
                   twelve_packs: twelvePacks,
                   twenty_four_packs: twentyFourPacks,
-                  mobiles: mobileNum,
-                  desktops: desktopNum,
-                  tablets: tabletNum,
-                  nps: this.npsScore
+                  mobiles: Number(mobileNum),
+                  desktops: Number(desktopNum),
+                  tablets: Number(tabletNum),
+                  nps: npsNum
                 };
-
+                console.log(report);
                 this.http.get(environment.reportsUrl)
                 .subscribe((reportRes:any)=>{
                   if (reportRes.find((report)=> report['dates'] == dateRes[dateRes.length-1].start_date) === undefined) {
@@ -187,6 +178,9 @@ export class OrderComponent implements OnInit {
                   }
                     });
                   });
+                });
+
+
                 });
               });
             });
