@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { AuthService } from '../services/auth.service';
-
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-report',
@@ -11,6 +11,7 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./report.component.css']
 })
 export class ReportComponent implements OnInit {
+  public busy: Subscription;
   public visits:Array<number>=[];
   public revenues:Array<number>=[];
   public dates:Array<number>=[];
@@ -183,26 +184,27 @@ export class ReportComponent implements OnInit {
   ngOnInit() {
     if (this.authService.user === false ){
       this.router.navigate(['']);
+    } else {
+      this.busy = this.http.get(environment.reportsUrl).subscribe((res:any)=>{
+        for(let i=0; i<res.length; i++){
+          this.visits[i] = res[i].total_visits;
+          this.revenues[i] = res[i].revenue;
+          this.dates[i] = res[i].dates;
+          this.orders[i] = res[i].total_orders;
+          this.avgOrderValue[i] = Number(res[i].average_order_value).toFixed(2);
+          this.repeatCustomers[i] = res[i].repeat_customers;
+          this.newCustomers[i] = res[i].new_customers;
+          this.mobiles[i] = res[i].mobiles;
+          this.desktops[i] = res[i].desktops;
+          this.tablets[i] = res[i].tablets;
+          this.samples[i] = res[i].samples;
+          this.sixPacks[i] = res[i].six_packs;
+          this.twelvePacks[i] = res[i].twelve_packs;
+          this.twentyFourPacks[i] = res[i].twenty_four_packs;
+          this.nPSs[i] = res[i].nps;
+        }
+      });
     }
-    this.http.get(environment.reportsUrl).subscribe((res:any)=>{
-      for(let i=0; i<res.length; i++){
-        this.visits[i] = res[i].total_visits;
-        this.revenues[i] = res[i].revenue;
-        this.dates[i] = res[i].dates;
-        this.orders[i] = res[i].total_orders;
-        this.avgOrderValue[i] = Number(res[i].average_order_value).toFixed(2);
-        this.repeatCustomers[i] = res[i].repeat_customers;
-        this.newCustomers[i] = res[i].new_customers;
-        this.mobiles[i] = res[i].mobiles;
-        this.desktops[i] = res[i].desktops;
-        this.tablets[i] = res[i].tablets;
-        this.samples[i] = res[i].samples;
-        this.sixPacks[i] = res[i].six_packs;
-        this.twelvePacks[i] = res[i].twelve_packs;
-        this.twentyFourPacks[i] = res[i].twenty_four_packs;
-        this.nPSs[i] = res[i].nps;
-      }
-    });
   }
 
   public goBack() {

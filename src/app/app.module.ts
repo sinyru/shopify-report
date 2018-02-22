@@ -4,6 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ChartsModule } from 'ng2-charts';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Ng4LoadingSpinnerModule } from 'ng4-loading-spinner';
+import { BusyModule } from 'angular2-busy';
 
 import { AppComponent } from './app.component';
 import { routing } from './app.routing';
@@ -35,7 +36,8 @@ import { LoginComponent } from './login/login.component';
     Ng4LoadingSpinnerModule.forRoot(),
     AngularFireModule.initializeApp(environment.firebase, 'angular-auth-firebase'),
     AngularFireDatabaseModule,
-    AngularFireAuthModule
+    AngularFireAuthModule,
+    BusyModule
   ],
   providers: [AuthService],
   bootstrap: [AppComponent]

@@ -23,6 +23,7 @@
     "@angular/router": "^5.2.0",
     "@types/gapi": "0.0.35",
     "@types/gapi.client": "^1.0.0",
+    "angular2-busy": "^2.0.4",
     "angularfire2": "^5.0.0-rc.6",
     "chart.js": "^2.7.1",
     "core-js": "^2.4.1",
