@@ -17,7 +17,7 @@ export class OrderComponent implements OnInit {
   public npsScore: number;
 
   constructor(private http: HttpClient, private router:Router,
-              private spinner: NgxSpinnerService
+              private spinner: NgxSpinnerService,
               public authService: AuthService) { }
 
   ngOnInit() {
