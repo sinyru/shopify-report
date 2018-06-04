@@ -107,9 +107,12 @@ export class OrderComponent implements OnInit {
 
               for(let i=0;i<fullResponse.length;i++){
                 revenue = revenue + parseFloat(fullResponse[i].total_price);
-                if (fullResponse[i].customer.orders_count>1){
-                  repeatCustomers++;
+                if (fullResponse[i].customer !== undefined) {
+                  if (fullResponse[i].customer.orders_count>1){
+                    repeatCustomers++;
+                  }
                 }
+
 
                 for(let j=0; j<fullResponse[i].line_items.length; j++){
                   if (fullResponse[i].line_items[j].variant_title === "") {
