@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import 'rxjs/add/operator/toPromise';
 import { Router } from '@angular/router';
-import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
 import { environment } from '../../environments/environment';
 declare var gapi : any;
 import { AuthService } from '../services/auth.service';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-order',
@@ -17,7 +17,7 @@ export class OrderComponent implements OnInit {
   public npsScore: number;
 
   constructor(private http: HttpClient, private router:Router,
-              private spinnerService: Ng4LoadingSpinnerService,
+              private spinner: NgxSpinnerService
               public authService: AuthService) { }
 
   ngOnInit() {
@@ -35,7 +35,7 @@ export class OrderComponent implements OnInit {
   }
 
   public updateReport():any {
-    this.spinnerService.show();
+    this.spinner.show();
     let visits: number = 0;
     let mobileNum: number = 0;
     let desktopNum: number = 0;
@@ -177,16 +177,16 @@ export class OrderComponent implements OnInit {
                           this.http.post(environment.dateUrl, {'input_date': { 'start_date' : updatedDate}})
                           .toPromise().then(()=> {
                             this.goReport();
-                            this.spinnerService.hide();
+                            this.spinner.hide();
                           });
                         } else {
                           this.goReport();
-                          this.spinnerService.hide();
+                          this.spinner.hide();
                         }
                       });
                   } else {
                     this.goReport();
-                    this.spinnerService.hide();
+                    this.spinner.hide();
                   }
                     });
                   });

@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { AuthService } from '../services/auth.service';
 import { Subscription } from 'rxjs';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-report',
@@ -11,7 +12,6 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./report.component.css']
 })
 export class ReportComponent implements OnInit {
-  public busy: Subscription;
   public visits:Array<number>=[];
   public revenues:Array<number>=[];
   public dates:Array<number>=[];
@@ -178,14 +178,16 @@ export class ReportComponent implements OnInit {
     }
   ];
 
-  constructor(private http: HttpClient, private router:Router, public authService: AuthService) { }
+  constructor(private http: HttpClient, private router:Router,
+    private spinner: NgxSpinnerService, public authService: AuthService) { }
 
 
   ngOnInit() {
     if (this.authService.user === false ){
       this.router.navigate(['']);
     } else {
-      this.busy = this.http.get(environment.reportsUrl).subscribe((res:any)=>{
+      this.spinner.show();
+      this.http.get(environment.reportsUrl).subscribe((res:any)=>{
         for(let i=0; i<res.length; i++){
           this.visits[i] = res[i].total_visits;
           this.revenues[i] = res[i].revenue;
@@ -203,6 +205,7 @@ export class ReportComponent implements OnInit {
           this.twentyFourPacks[i] = res[i].twenty_four_packs;
           this.nPSs[i] = res[i].nps;
         }
+        this.spinner.hide();
       });
     }
   }
